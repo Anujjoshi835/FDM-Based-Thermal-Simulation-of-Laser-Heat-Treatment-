@@ -1,0 +1,51 @@
+
+clear; clc; close all;
+% Domain and grid
+Lx=1;      
+Ly=1.5;      
+Nx=100;    
+Ny=100;     
+
+% parameters     
+h1=1;    
+h2=3;    
+phi0=1;    
+S0=100;   
+x0=0.5;    
+y0=0.5;    
+d=0.1;  
+
+f1 = @(x,y) 0;                                        
+f2 = @(x,y) -S0*exp(-((x-x0)^2 +(y-y0)^2)/d^2);      
+
+[phi, x, y]=general_FDM_solver(Lx, Ly, Nx, Ny, f1, f2, h1, h2, phi0);
+
+% Plot 1
+figure;
+contourf(x, y, phi', 20, 'LineColor','none'); 
+colorbar;
+xlabel('x'); ylabel('y');
+title('Contour of \phi(x,y)');
+axis equal tight;
+
+% Plot 2
+figure; hold on;
+y_ = [0.1, 0.3, 0.5, 0.7, 0.9]*Ly;
+for ys = y_
+    [~,jidx]=min(abs(y-ys));
+    plot(x,phi(:,jidx),'DisplayName',sprintf('y = %.2f',y(jidx)));
+end
+xlabel('x'); ylabel('\phi');
+title('\phi vs x at various y-locations');
+legend show; grid on;
+
+% Plot 3
+figure; hold on;
+x_ = [0.1, 0.3, 0.5, 0.7, 0.9]*Lx;
+for xs = x_
+    [~,iidx]=min(abs(x-xs));
+    plot(y,phi(iidx,:),'DisplayName',sprintf('x = %.2f', x(iidx)));
+end
+xlabel('y'); ylabel('\phi');
+title('\phi vs y at various x-locations');
+legend show; grid on;
